@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Reto 5 - Módulo 2</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+         <style>
+            body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 60px;
+            }
+
+            .btn-counter {
+            width: 150px;
+            height: 200px;
+            margin: 60px auto;
+            border-radius: 12px;
+            border: 2px solid #008b8b;
+            background-color: #135f5b;
+            color: #fff;
+            font-size: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            outline: none;
+            }
+
+            .btn-counter:active {
+            transform: scale(0.97);
+            }
+         </style>
+    </head>
+<body>
+    
+  <h2>Contadores de clics</h2>
+
+  <!-- Botón 1 -->
+  <button id="btn1" class="btn-counter">0</button>
+
+  <!-- Botón 2 -->
+  <button id="btn2" class="btn-counter">+1</button>
+
+  <script>
+    // Contadores
+    let count1 = 0;
+    let count2 = 0;
+
+    const btn1 = document.getElementById('btn1');
+    const btn2 = document.getElementById('btn2');
+
+    btn2.addEventListener('click', () => {
+      count1++;
+      btn1.textContent = count1;
+    });
+
+        btn1.addEventListener('click', () => {
+        count1 = 0;
+        btn1.textContent = 0;
+
+});
+  </script>
+
+
+
+
+
+</body>
+
+
+
+
+</html>
