@@ -1,0 +1,79 @@
+<!--
+Crea un programa que solicite ingresar tres nombres unidos por una coma. 
+Por  ejemplo:  María,Pedro,Rodrigo  .  Como  resultado,  debes  mostrar  en  la 
+página la ubicación de cada letra en el string como si se tratara de un array 
+(partiendo  desde  0).  Por  último,  indica  en  qué  posición  de  la  cadena  se 
+ubican las comas. -->
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Training Array iterativo</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+    </head>
+    <body>
+        <h1>Arreglos e iteraciones</h1>
+
+        <div>
+            <input type="text" id="nombres" placeholder="Ingresa tres nombres separados por comas" />
+            <button onclick="procesarNombres()">Procesar Nombres</button>
+            <div id="resultado"></div>
+
+        </div>
+
+<script>
+function procesarNombres() {
+    const input = document.getElementById("nombres").value;
+    const resultado = document.getElementById("resultado");
+    resultado.innerHTML = '';
+
+    if (!input.trim()) {
+        resultado.textContent = 'Por favor ingresa tres nombres separados por comas.';
+        return;
+    }
+
+    // Posiciones de las comas en la cadena original
+    const commaPositions = [];
+    for (let k = 0; k < input.length; k++) {
+        if (input[k] === ',') commaPositions.push(k);
+    }
+
+    // Arreglo de nombres limpio (sin espacios alrededor y sin elementos vacíos)
+    const nombresArray = input.split(',').map(s => s.trim()).filter(Boolean);
+    console.log('Nombres procesados:', nombresArray);
+
+    // Mostrar posiciones de letras por nombre (índices dentro de cada nombre)
+    const h2 = document.createElement('h2');
+    h2.textContent = 'Posiciones de las letras:';
+    resultado.appendChild(h2);
+
+    const ul = document.createElement('ul');
+    nombresArray.forEach((nombre) => {
+        for (let j = 0; j < nombre.length; j++) {
+            const li = document.createElement('li');
+            li.textContent = `Nombre: ${nombre}, Letra: '${nombre[j]}', Posición: ${j}`;
+            ul.appendChild(li);
+        }
+    });
+    resultado.appendChild(ul);
+
+    // Mostrar posiciones de las comas en la cadena (índices desde 0)
+    const p = document.createElement('p');
+    if (commaPositions.length) {
+        p.textContent = 'Posiciones de las comas en la cadena: ' + commaPositions.join(', ');
+    } else {
+        p.textContent = 'No se encontraron comas en la cadena.';
+    }
+    resultado.appendChild(p);
+}
+addEventListener("DOMContentLoaded", function() {
+    document.getElementById("nombres").value = "María,Pedro,Rodrigo";
+});
+</script>
+    </body>
+
+    </html>

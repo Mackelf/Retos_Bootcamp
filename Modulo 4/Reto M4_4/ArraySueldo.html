@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Array Sueldo</title>
+</head>
+<body>
+  <h1>Array Sueldo</h1>
+
+  <h2>Sueldo bruto</h2>
+  <table id="tablaBruto" border="1">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Sueldo Bruto</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Sueldo líquido</h2>
+  <table id="tablaLiquido" border="1">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Sueldo Líquido</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const empleados = [
+      { nombre: "Ana", sueldobruto: 100000 },
+      { nombre: "Luis", sueldobruto: 800000 },
+      { nombre: "Carla", sueldobruto: 120000 },
+      { nombre: "Antonio", sueldobruto: 30000},
+    ];
+
+    const matrizSueldoBruto = [];
+    const matrizSueldoLiquido = [];
+
+    empleados.forEach((emp) => {
+      const bruto = emp.sueldobruto;
+      const liquido = bruto * 0.83;//descuento de 10 y 7 %.
+
+      matrizSueldoBruto.push([emp.nombre, bruto]);
+      matrizSueldoLiquido.push([emp.nombre, liquido]);
+    });
+    console.log(matrizSueldoBruto);
+    console.log(matrizSueldoLiquido);
+
+    // Referencias a los <tbody>
+    const tbodyBruto = document.querySelector('#tablaBruto tbody');
+    const tbodyLiquido = document.querySelector('#tablaLiquido tbody');
+
+    // Pintar matrizSueldoBruto
+    matrizSueldoBruto.forEach(fila => {
+      const tr = document.createElement('tr');
+
+      const tdNombre = document.createElement('td');
+      tdNombre.textContent = fila[0];
+
+      const tdBruto = document.createElement('td');
+      tdBruto.textContent = fila[1];
+
+      tr.appendChild(tdNombre);
+      tr.appendChild(tdBruto);
+      tbodyBruto.appendChild(tr);
+    });
+
+    // Pintar matrizSueldoLiquido
+    matrizSueldoLiquido.forEach(fila => {
+      const tr = document.createElement('tr');
+
+      const tdNombre = document.createElement('td');
+      tdNombre.textContent = fila[0];
+
+      const tdLiquido = document.createElement('td');
+      tdLiquido.textContent = fila[1].toFixed(0); // redondear si quieres
+
+      tr.appendChild(tdNombre);
+      tr.appendChild(tdLiquido);
+      tbodyLiquido.appendChild(tr);
+    });
+  </script>
+</body>
+</html>
