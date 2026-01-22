@@ -25,67 +25,140 @@
     .main {
       margin-top: 20px; /* espacio entre título y formulario */
     }
+
+    .contenedor {
+  display: inline-block;  /* usuarios lado a lado */
+  margin: 10px;
+  background: rgba(255,255,255,0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.contenedor:hover .escondido {
+  display: block !important;  /* muestra password al hover */
+  color: #ff6b6b;
+}
+
+.escondido {
+  display: none;  /* contraseña oculta por defecto */
+}
+
   </style>
 
   <body>
     <h1>Diccionario</h1>
     <p>Ingrese cantidad de usuarios a crear</p>
-    <input type="number" id="cantidad" min="0" max="10">
-    <button id="confirmar">Confirmar</button>
+    <input type="number" id="cantidad" min="0" max="10" placeholder="1-10">
+    <button class="btn btn-primary mt-3" id="confirmar">Confirmar</button>
  
     <div id="formulario"></div>
 
     <script>
-      //Crear formulario
-      const inputCantidad = document.getElementById("cantidad");
-      const btnConfirmar = document.querySelector("#confirmar");
-      const contFormulario = document.getElementById("formulario");
 
-      btnConfirmar.addEventListener("click", crearCampos);
+  let n = 0;  // declara n global
 
-      function crearCampos() {
-        const n = Number(inputCantidad.value);
-        
-        //Clean form
-        contFormulario.innerHTML = "";
-        
-        if (isNaN(n) || n <= 0) {
-          contFormulario.textContent = "Ingrese un número válido (>0).";
-          return;
-        }
+  const inputCantidad = document.getElementById("cantidad");
+  const btnConfirmar = document.querySelector("#confirmar");
+  const contFormulario = document.getElementById("formulario");
 
-        if (n > 10) {
-          contFormulario.textContent = "Ingrese un número menor o igual a 10.";
-          return;
-        }
+  btnConfirmar.addEventListener("click", crearCampos);
 
-        for (let i = 0; i < n; i++) {
-          const index = i + 1;
+  function crearCampos() {
+    n = Number(inputCantidad.value);
+    contFormulario.innerHTML = "";
 
-          const fila = document.createElement("div");
-          fila.className = "mb-2";
-
-     fila.innerHTML = `
-          <h3>Usuario ${index}</h3>
-          <input type="text"  placeholder="Nombre"         id="nombre-${index}">
-          <input type="number"  placeholder="ID" min="0" max="100"            id="id-${index}">
-          <input type="number" placeholder="month" id="anio-${index}">
-          
-        `;
-
-        contFormulario.appendChild(fila);
-      }
-       // botón único para guardar todo
-  const btnGuardar = document.createElement("button");
-  btnGuardar.textContent = "Guardar usuarios";
-  btnGuardar.id = "btnGuardar";
-  btnGuardar.className = "btn btn-primary mt-3";
-  contFormulario.appendChild(btnGuardar);
+    if (isNaN(n) || n <= 0) {
+      contFormulario.textContent = "Ingrese un número válido (>0).";
+      return;
     }
 
-    //Crear diccionario
-    const dicc = {};
+    if (n > 10) {
+      contFormulario.textContent = "Ingrese un número menor o igual a 10.";
+      return;
+    }
 
+
+
+    for (let i = 0; i < n; i++) {
+      const index = i + 1;
+      const fila = document.createElement("div");
+      fila.className = "mb-2";
+
+      fila.innerHTML = `
+        <h3>Usuario ${index}</h3>
+        <input type="text"   placeholder="Nombre"             id="nombre-${index}">
+        <input type="number" placeholder="ID" min="0" max="100" id="id-${index}">
+        <input type="number" placeholder="Año" min="1900" max="2000" id="anio-${index}">
+      `;
+
+      contFormulario.appendChild(fila);
+    }
+
+    // Crear botón y AGREGAR EVENT LISTENER AQUÍ (cuando ya existe)
+    const btnGuardar = document.createElement("button");
+    btnGuardar.textContent = "Generar Passwords";
+    btnGuardar.className = "btn btn-primary mt-3";
+    contFormulario.appendChild(btnGuardar);
+
+    // Event listener en el botón recién creado
+    btnGuardar.addEventListener("click", guardarUsuarios);
+  }
+
+  function guardarUsuarios() {
+    const usuarios = [];
+    const idsUsados = [];
+
+    for (let i = 0; i < n; i++) {
+      const index = i + 1;
+      const nombre = document.getElementById(`nombre-${index}`).value;
+      const id = document.getElementById(`id-${index}`).value;
+      const anio = Number(document.getElementById(`anio-${index}`).value);
+
+      if (!nombre || !id || isNaN(anio)) {
+        alert(`Completa todos los campos del usuario ${index}`);
+        return;
+      }
+
+      // VERIFICAR ID DUPLICADO
+    if (idsUsados.includes(id)) {
+      alert(`El ID "${id}" ya está en uso. Los IDs deben ser únicos.`);
+      return;
+    }
+    idsUsados.push(id);  // marcar como usado
+
+      // Año en hex + random 1-100
+      const anioHex = anio.toString(16);
+      const randomNum = Math.floor(Math.random() * 100) + 1;
+      const password = anioHex + randomNum;
+
+      usuarios.push({
+        nombre,
+        id,
+        anioNacimiento: anio,
+        password
+      });
+    }
+
+     // MOSTRAR USUARIOS EN DIVS
+  let htmlUsuarios = '<h2>Usuarios creados:</h2>';
+  usuarios.forEach((usuario, index) => {
+    htmlUsuarios += `
+      <div class="contenedor mb-3 p-3 border rounded">
+        <h3>${usuario.nombre}</h3>
+        <h4>ID: ${usuario.id}</h4>
+        <h4>Año: ${usuario.anioNacimiento}</h4>
+        <h5 class="escondido">Password: ${usuario.password}</h5>
+      </div>
+    `;
+  });
+
+  contFormulario.innerHTML = htmlUsuarios; 
+
+
+    console.log("Usuarios guardados:", usuarios);
+    //contFormulario.innerHTML += `<pre>${JSON.stringify(usuarios, null, 2)}</pre>`;
+  }
+</script>
 
 
 
