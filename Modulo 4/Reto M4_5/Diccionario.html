@@ -118,14 +118,14 @@
         alert(`Completa todos los campos del usuario ${index}`);
         return;
       }
-
+console.log(idsUsados);
       // VERIFICAR ID DUPLICADO
     if (idsUsados.includes(id)) {
       alert(`El ID "${id}" ya está en uso. Los IDs deben ser únicos.`);
       return;
     }
     idsUsados.push(id);  // marcar como usado
-
+    
       // Año en hex + random 1-100
       const anioHex = anio.toString(16);
       const randomNum = Math.floor(Math.random() * 100) + 1;

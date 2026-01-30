@@ -1,2 +1,7 @@
 *.gdoc
 *.ini
+# Ignorar todos los desktop.ini
+desktop.ini
+
+# (opcional) ignorar todos los .ini
+*.ini

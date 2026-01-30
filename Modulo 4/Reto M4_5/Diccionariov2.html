@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Modulo 4. Leccion 3. Reto 5</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column; /* apila verticalmente */
+      align-items: center; /* centra horizontalmente */
+      background: linear-gradient(135deg, #4fa8ff, #1853b8);
+      color: azure;
+    }
+
+    .main {
+      margin-top: 20px; /* espacio entre título y formulario */
+    }
+
+    .contenedor {
+  display: inline-block;  /* usuarios lado a lado */
+  margin: 10px;
+  background: rgba(255,255,255,0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.contenedor:hover .escondido {
+  display: block !important;  /* muestra password al hover */
+  color: #ff6b6b;
+}
+
+.escondido {
+  display: none;  /* contraseña oculta por defecto */
+}
+
+  </style>
+
+  <body>
+    <h1>Diccionario</h1>
+    <p>Ingrese cantidad de usuarios a crear</p>
+    <input type="number" id="cantidad" min="0" max="10" placeholder="1-10">
+    <button class="btn btn-primary mt-3" id="confirmar">Confirmar</button>
+    <button class="btn btn-danger mt-3" id="btn-limpiar">NUKE</button>
+
+ 
+    <div id="formulario"></div>
+<script>
+  let n = 0;
+  let todosLosUsuarios = [];  // Array persistente de TODOS los usuarios
+  let idsUsadosGlobal = [];   // IDs ya tomados (persistente)
+
+  const inputCantidad = document.getElementById("cantidad");
+  const btnConfirmar = document.querySelector("#confirmar");
+  const contFormulario = document.getElementById("formulario");
+
+const btnLimpiar = document.getElementById("btn-limpiar");
+btnLimpiar.addEventListener("click", limpiarTodo);
+
+function limpiarTodo() {
+  if (!confirm("¿Seguro que quieres borrar todos los usuarios y comenzar de nuevo?")) {
+    return;
+  }
+
+  // Borrar localStorage
+  localStorage.clear(); // borra todas las claves del dominio[web:38][web:51]
+
+  // Resetear arrays en memoria
+  todosLosUsuarios = [];
+  idsUsadosGlobal = [];
+  n = 0;
+
+  // Limpiar interfaz
+  contFormulario.innerHTML = "";
+  inputCantidad.value = "";
+
+  // Opcional: recargar la página
+  // location.reload(); [web:49]
+}
+
+
+
+
+  // Cargar datos al iniciar la página
+  window.onload = function() {
+    cargarDatos();
+    mostrarUsuariosExistentes();
+  };
+
+  btnConfirmar.addEventListener("click", crearCampos);
+
+  // GUARDAR en localStorage (array completo)
+  function guardarDatos() {
+    localStorage.setItem('usuariosApp', JSON.stringify(todosLosUsuarios));
+    localStorage.setItem('idsUsadosApp', JSON.stringify(idsUsadosGlobal));
+  }
+
+  // CARGAR desde localStorage
+  function cargarDatos() {
+    const usuariosGuardados = localStorage.getItem('usuariosApp');
+    const idsGuardados = localStorage.getItem('idsUsadosApp');
+    
+    if (usuariosGuardados) {
+      todosLosUsuarios = JSON.parse(usuariosGuardados);
+    }
+    if (idsGuardados) {
+      idsUsadosGlobal = JSON.parse(idsGuardados);
+    }
+  }
+
+  // Mostrar usuarios existentes al cargar
+  function mostrarUsuariosExistentes() {
+    if (todosLosUsuarios.length === 0) return;
+    
+    let htmlUsuarios = '<h2>Usuarios existentes:</h2>';
+    todosLosUsuarios.forEach((usuario) => {
+      htmlUsuarios += `
+        <div class="contenedor mb-3 p-3 border rounded">
+          <h3>${usuario.nombre}</h3>
+          <h4>ID: ${usuario.id}</h4>
+          <h4>Año: ${usuario.anioNacimiento}</h4>
+          <h5 class="escondido">Password: ${usuario.password}</h5>
+        </div>
+      `;
+    });
+    contFormulario.innerHTML = htmlUsuarios;
+  }
+
+  function crearCampos() {
+    n = Number(inputCantidad.value);
+    contFormulario.innerHTML = "";
+
+    if (isNaN(n) || n <= 0) {
+      contFormulario.textContent = "Ingrese un número válido (>0).";
+      return;
+    }
+
+    if (n > 10) {
+      contFormulario.textContent = "Ingrese un número menor o igual a 10.";
+      return;
+    }
+
+    for (let i = 0; i < n; i++) {
+      const index = i + 1;
+      const fila = document.createElement("div");
+      fila.className = "mb-2";
+
+      fila.innerHTML = `
+        <h3>Usuario ${index}</h3>
+        <input type="text" placeholder="Nombre" id="nombre-${index}">
+        <input type="number" placeholder="ID" min="0" max="100" id="id-${index}">
+        <input type="number" placeholder="Año" min="1900" max="2000" id="anio-${index}">
+      `;
+
+      contFormulario.appendChild(fila);
+    }
+
+    const btnGuardar = document.createElement("button");
+    btnGuardar.textContent = "Generar Passwords";
+    btnGuardar.className = "btn btn-primary mt-3";
+    contFormulario.appendChild(btnGuardar);
+
+    btnGuardar.addEventListener("click", guardarUsuarios);
+  }
+
+  function guardarUsuarios() {
+    const nuevosUsuarios = []; // Solo los nuevos de este lote
+    const nuevosIds = [];      // IDs nuevos de este lote
+
+    for (let i = 0; i < n; i++) {
+      const index = i + 1;
+      const nombre = document.getElementById(`nombre-${index}`).value;
+      const id = document.getElementById(`id-${index}`).value;
+      const anio = Number(document.getElementById(`anio-${index}`).value);
+
+      if (!nombre || !id || isNaN(anio)) {
+        alert(`Completa todos los campos del usuario ${index}`);
+        return; // NO guardamos nada
+      }
+
+      // ID ya usado antes (en sesiones anteriores)
+      if (idsUsadosGlobal.includes(id)) {
+        alert(`El ID "${id}" ya está tomado (de sesiones anteriores). Elige otro.`);
+        return; // NO se bloquea nada nuevo
+      }
+
+      // ID repetido dentro del mismo lote actual
+      if (nuevosIds.includes(id)) {
+        alert(`El ID "${id}" está repetido en este lote. Elige otro.`);
+        return;
+      }
+
+      nuevosIds.push(id);
+
+      // Año en hex + random 1-100
+      const anioHex = anio.toString(16);
+      const randomNum = Math.floor(Math.random() * 100) + 1;
+      const password = anioHex + randomNum;
+
+      const usuario = {
+        nombre,
+        id,
+        anioNacimiento: anio,
+        password
+      };
+
+      nuevosUsuarios.push(usuario);
+    }
+
+    // Si todo el for terminó bien, recién aquí actualizamos globales
+    todosLosUsuarios = todosLosUsuarios.concat(nuevosUsuarios);
+    idsUsadosGlobal = idsUsadosGlobal.concat(nuevosIds);
+
+    // Guardar en localStorage
+    guardarDatos();
+
+    // Mostrar TODOS
+    let htmlUsuarios = '<h2>Usuarios totales:</h2>';
+    todosLosUsuarios.forEach((usuario) => {
+      htmlUsuarios += `
+        <div class="contenedor mb-3 p-3 border rounded">
+          <h3>${usuario.nombre}</h3>
+          <h4>ID: ${usuario.id}</h4>
+          <h4>Año: ${usuario.anioNacimiento}</h4>
+          <h5 class="escondido">Password: ${usuario.password}</h5>
+        </div>
+      `;
+    });
+
+    contFormulario.innerHTML = htmlUsuarios;
+    console.log("Todos los usuarios:", todosLosUsuarios);
+  }
+</script>
+
+
+  </body>
+</html>
